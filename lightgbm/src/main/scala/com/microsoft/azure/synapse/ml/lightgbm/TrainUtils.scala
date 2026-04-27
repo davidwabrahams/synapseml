@@ -23,7 +23,7 @@ private object TrainUtils extends Serializable {
       booster.mergeBooster(modelStr)
       // After merging a booster from a past training batch, num_terations must be increased
       // to make room for the future training. Otherwise batch 1 uses all the
-      // iterations and subsequent batches get none.
+      // iterations and no training is done on subsequent batches.
       val numIterations = trainParams.generalParams.numIterations
       booster.resetParameter(s"num_iterations=${booster.numTotalIterations + numIterations}")
     }
