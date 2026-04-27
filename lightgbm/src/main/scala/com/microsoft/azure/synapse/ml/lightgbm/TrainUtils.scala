@@ -21,6 +21,11 @@ private object TrainUtils extends Serializable {
     val booster = new LightGBMBooster(trainDataset, parameters)
      trainParams.generalParams.modelString.foreach { modelStr =>
       booster.mergeBooster(modelStr)
+      // After merging a booster from a past training batch, num_terations must be increased
+      // to make room for the future training. Otherwise batch 1 uses all the
+      // iterations and subsequent batches get none.
+      val numIterations = trainParams.generalParams.numIterations
+      booster.resetParameter(s"num_iterations=${booster.numTotalIterations + numIterations}")
     }
     validDatasetOpt.foreach { dataset =>
       booster.addValidationDataset(dataset)
